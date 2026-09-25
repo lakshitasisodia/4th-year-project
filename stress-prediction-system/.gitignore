@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+frontend/node_modules/
+frontend/dist/
+backend/trained_models/*.pkl
+backend/trained_models/*.json
