@@ -70,7 +70,7 @@ def evaluate(model,X,y):
 def save(name,search,metrics,features,classes,shape):
     MODEL_DIR.mkdir(exist_ok=True)
     joblib.dump(search.best_estimator_,MODEL_DIR/f"{name}_pipeline.pkl")
-    meta={"dataset":name,"selected_algorithm":search.best_estimator_.steps[-1][0],"cv_macro_f1":float(search.best_score_),
+    meta={"dataset":name,"selected_algorithm":search.best_estimator_.steps[-1][1].__class__.__name__,"cv_macro_f1":float(search.best_score_),
           "best_params":search.best_params_,"input_features":features,"output_classes":classes,
           "dataset_shape_after_cleaning":list(shape),"metrics":metrics,"random_state":RANDOM_STATE,
           "test_size":TEST_SIZE,"cv_folds":CV_FOLDS,"preprocessing":"saved inside pipeline"}
