@@ -1,119 +1,59 @@
+
+import json
+from pathlib import Path
 import joblib
 import pandas as pd
-import numpy as np
 from config import Config
 
 class StressPredictor:
-    
     def __init__(self):
-        self.model_d1 = None
-        self.model_d2 = None
-        self.scaler_d1 = None
-        self.scaler_d2 = None
-        self.features_d1 = None
-        self.features_d2 = None
-        self.metrics = None
+        self.model_d1=None; self.model_d2=None; self.metadata_d1=None; self.metadata_d2=None
         self.load_models()
-    
     def load_models(self):
         try:
-            self.model_d1 = joblib.load(Config.MODEL_D1_PATH)
-            self.model_d2 = joblib.load(Config.MODEL_D2_PATH)
-            self.scaler_d1 = joblib.load(Config.SCALER_D1_PATH)
-            self.scaler_d2 = joblib.load(Config.SCALER_D2_PATH)
-            self.features_d1 = joblib.load(Config.FEATURES_D1_PATH)
-            self.features_d2 = joblib.load(Config.FEATURES_D2_PATH)
-            self.metrics = joblib.load(Config.METRICS_PATH)
-            print("All models loaded successfully")
+            self.model_d1=joblib.load(Config.MODEL_D1_PIPELINE_PATH)
+            self.model_d2=joblib.load(Config.MODEL_D2_PIPELINE_PATH)
+            self.metadata_d1=self._metadata(Config.D1_METADATA_PATH)
+            self.metadata_d2=self._metadata(Config.D2_METADATA_PATH)
         except Exception as e:
-            print(f"Error loading models: {e}")
-            raise
-    
-    def predict_stress_level(self, input_data):
-        try:
-            df = pd.DataFrame([input_data])
-            
-            df = df[self.features_d1]
-            
-            df_scaled = self.scaler_d1.transform(df)
-            
-            prediction = self.model_d1.predict(df_scaled)[0]
-            probabilities = self.model_d1.predict_proba(df_scaled)[0]
-            
-            result = {
-                'prediction': int(prediction),
-                'stress_level': Config.STRESS_LEVEL_LABELS[prediction],
-                'confidence': {
-                    'low': round(float(probabilities[0]) * 100, 2),
-                    'moderate': round(float(probabilities[1]) * 100, 2),
-                    'high': round(float(probabilities[2]) * 100, 2)
-                },
-                'recommendation': self._get_recommendation(prediction, probabilities),
-                'model_accuracy': round(self.metrics['d1']['accuracy'] * 100, 2)
-            }
-            
-            return result
-        
-        except Exception as e:
-            raise Exception(f"Prediction error: {str(e)}")
-    
-    def predict_stress_type(self, input_data):
-        try:
-            df = pd.DataFrame([input_data])
-            
-            df = df[self.features_d2]
-            
-            df_scaled = self.scaler_d2.transform(df)
-            
-            prediction = self.model_d2.predict(df_scaled)[0]
-            probabilities = self.model_d2.predict_proba(df_scaled)[0]
-            
-            result = {
-                'prediction': int(prediction),
-                'stress_type': Config.STRESS_TYPE_LABELS[prediction],
-                'confidence': round(float(max(probabilities)) * 100, 2),
-                'probabilities': {
-                    'distress': round(float(probabilities[0]) * 100, 2),
-                    'eustress': round(float(probabilities[1]) * 100, 2),
-                    'no_stress': round(float(probabilities[2]) * 100, 2)
-                },
-                'recommendation': self._get_type_recommendation(prediction),
-                'model_accuracy': round(self.metrics['d2']['accuracy'] * 100, 2)
-            }
-            
-            return result
-        
-        except Exception as e:
-            raise Exception(f"Prediction error: {str(e)}")
-    
-    def _get_recommendation(self, prediction, probabilities):
-        if prediction == 0:
-            return "Your stress level is low. Maintain healthy habits and continue your current coping strategies."
-        elif prediction == 1:
-            return "Your stress level is moderate. Consider stress management techniques like exercise, meditation, or talking to someone."
-        else:
-            return "Your stress level is high. It's important to seek support from a counselor or mental health professional."
-    
-    def _get_type_recommendation(self, prediction):
-        if prediction == 0:
-            return "You're experiencing distress (negative stress). Consider seeking support and practicing stress-reduction techniques."
-        elif prediction == 1:
-            return "You're experiencing eustress (positive stress). Channel this energy productively while maintaining balance."
-        else:
-            return "You're currently experiencing minimal stress. Continue maintaining your well-being practices."
-    
+            raise RuntimeError("Rebuilt ML pipelines are missing. Run train_pipeline.py first.") from e
+    @staticmethod
+    def _metadata(path):
+        return json.loads(Path(path).read_text(encoding="utf-8"))
+    @staticmethod
+    def _predict(model,data,labels):
+        X=pd.DataFrame([data]); pred=int(model.predict(X)[0]); probs=model.predict_proba(X)[0]
+        pmap={labels[int(c)]:round(float(p)*100,2) for c,p in zip(model.classes_,probs)}
+        return pred,pmap
+    def predict_stress_level(self,data):
+        pred,p=self._predict(self.model_d1,data,Config.STRESS_LEVEL_LABELS)
+        return {"prediction":pred,"stress_level":Config.STRESS_LEVEL_LABELS[pred],
+                "confidence":{"low":p["Low Stress"],"moderate":p["Moderate Stress"],"high":p["High Stress"]},
+                "recommendation":self._get_recommendation(pred),
+                "model_accuracy":round(self.metadata_d1["metrics"]["accuracy"]*100,2),
+                "model_f1_macro":round(self.metadata_d1["metrics"]["f1_macro"]*100,2)}
+    def predict_stress_type(self,data):
+        pred,p=self._predict(self.model_d2,data,Config.STRESS_TYPE_LABELS)
+        return {"prediction":pred,"stress_type":Config.STRESS_TYPE_LABELS[pred],
+                "confidence":round(max(p.values()),2),
+                "probabilities":{"distress":p["Distress"],"eustress":p["Eustress"],"no_stress":p["No Stress"]},
+                "recommendation":self._get_type_recommendation(pred),
+                "model_accuracy":round(self.metadata_d2["metrics"]["accuracy"]*100,2),
+                "model_f1_macro":round(self.metadata_d2["metrics"]["f1_macro"]*100,2)}
+    @staticmethod
+    def _get_recommendation(pred):
+        return {0:"Your stress level is low. Maintain healthy habits and continue your current coping strategies.",
+                1:"Your stress level is moderate. Consider stress-management techniques such as exercise, relaxation, or talking to someone you trust.",
+                2:"Your stress level is high. Consider seeking support from a qualified counselor or mental-health professional."}[pred]
+    @staticmethod
+    def _get_type_recommendation(pred):
+        return {0:"The model classified the response pattern as distress. Consider stress-reduction strategies and, if needed, professional support.",
+                1:"The model classified the response pattern as eustress. Maintain balance and monitor whether the pressure remains manageable.",
+                2:"The model classified the response pattern as no stress. Continue maintaining healthy well-being practices."}[pred]
     def get_model_info(self):
-        return {
-            'dataset_1': {
-                'name': 'Stress Level Predictor',
-                'accuracy': round(self.metrics['d1']['accuracy'] * 100, 2),
-                'f1_score': round(self.metrics['d1']['f1_macro'] * 100, 2),
-                'classes': list(Config.STRESS_LEVEL_LABELS.values())
-            },
-            'dataset_2': {
-                'name': 'Stress Type Predictor',
-                'accuracy': round(self.metrics['d2']['accuracy'] * 100, 2),
-                'f1_score': round(self.metrics['d2']['f1_macro'] * 100, 2),
-                'classes': list(Config.STRESS_TYPE_LABELS.values())
-            }
-        }
+        return {"dataset_1":{"name":"Stress Level Predictor","accuracy":round(self.metadata_d1["metrics"]["accuracy"]*100,2),
+                             "f1_score":round(self.metadata_d1["metrics"]["f1_macro"]*100,2),
+                             "classes":list(Config.STRESS_LEVEL_LABELS.values()),"selected_algorithm":self.metadata_d1["selected_algorithm"]},
+                "dataset_2":{"name":"Stress Type Predictor","accuracy":round(self.metadata_d2["metrics"]["accuracy"]*100,2),
+                             "f1_score":round(self.metadata_d2["metrics"]["f1_macro"]*100,2),
+                             "classes":list(Config.STRESS_TYPE_LABELS.values()),"selected_algorithm":self.metadata_d2["selected_algorithm"]}}
