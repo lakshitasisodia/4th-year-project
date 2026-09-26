@@ -1,0 +1,29 @@
+# --- Python Backend Dependencies & Virtual Environments ---
+backend/venv/
+backend/.venv/
+ENV/
+env/
+backend/__pycache__/
+backend/**/*.py[cod]
+backend/*$py.class
+backend/.pytest_cache/
+
+# --- Node.js Frontend Dependencies ---
+frontend/node_modules/
+frontend/.pnpm-store/
+
+# --- Environment Variables / Sensitive Data ---
+backend/.env
+frontend/.env
+*.env.local
+
+# --- Frontend Build Outputs & IDEs ---
+frontend/dist/
+frontend/build/
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp

@@ -1,0 +1,221 @@
+{
+  "trained_at": "2026-09-26T07:41:56.068055+00:00",
+  "python_version": "3.11.1 (tags/v3.11.1:a7a450f, Dec  6 2022, 19:58:39) [MSC v.1934 64 bit (AMD64)]",
+  "sklearn_version": "1.9.1",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "random_state": 42,
+  "test_size": 0.25,
+  "cv_folds": 5,
+  "d1": {
+    "features": [
+      "anxiety_level",
+      "self_esteem",
+      "mental_health_history",
+      "depression",
+      "headache",
+      "blood_pressure",
+      "sleep_quality",
+      "breathing_problem",
+      "noise_level",
+      "living_conditions",
+      "safety",
+      "basic_needs",
+      "academic_performance",
+      "study_load",
+      "teacher_student_relationship",
+      "future_career_concerns",
+      "social_support",
+      "peer_pressure",
+      "extracurricular_activities",
+      "bullying"
+    ],
+    "class_labels": {
+      "0": "Low Stress",
+      "1": "Moderate Stress",
+      "2": "High Stress"
+    },
+    "metrics": {
+      "accuracy": 0.8654545454545455,
+      "precision_macro": 0.8663976535110556,
+      "recall_macro": 0.8655212716222535,
+      "f1_macro": 0.8656451098889854,
+      "f1_weighted": 0.865558652068138,
+      "mcc": 0.7984601359143464,
+      "confusion_matrix": [
+        [
+          79,
+          5,
+          9
+        ],
+        [
+          5,
+          78,
+          7
+        ],
+        [
+          6,
+          5,
+          81
+        ]
+      ],
+      "per_class": {
+        "Low Stress": {
+          "precision": 0.8777777777777778,
+          "recall": 0.8494623655913979,
+          "f1-score": 0.8633879781420765,
+          "support": 93.0
+        },
+        "Moderate Stress": {
+          "precision": 0.8863636363636364,
+          "recall": 0.8666666666666667,
+          "f1-score": 0.8764044943820225,
+          "support": 90.0
+        },
+        "High Stress": {
+          "precision": 0.8350515463917526,
+          "recall": 0.8804347826086957,
+          "f1-score": 0.8571428571428571,
+          "support": 92.0
+        },
+        "accuracy": 0.8654545454545455,
+        "macro avg": {
+          "precision": 0.8663976535110556,
+          "recall": 0.8655212716222535,
+          "f1-score": 0.8656451098889854,
+          "support": 275.0
+        },
+        "weighted avg": {
+          "precision": 0.8662938286330975,
+          "recall": 0.8654545454545455,
+          "f1-score": 0.865558652068138,
+          "support": 275.0
+        }
+      }
+    },
+    "cv_f1_macro": 0.8886348619785824,
+    "best_params": {
+      "clf__max_depth": 5,
+      "clf__min_samples_split": 2,
+      "clf__n_estimators": 100
+    },
+    "n_train": 825,
+    "n_test": 275,
+    "class_distribution_full": {
+      "Low Stress": 373,
+      "High Stress": 369,
+      "Moderate Stress": 358
+    }
+  },
+  "d2": {
+    "features": [
+      "Gender",
+      "Age",
+      "Have you recently experienced stress in your life?",
+      "Have you noticed a rapid heartbeat or palpitations?",
+      "Have you been dealing with anxiety or tension recently?",
+      "Do you face any sleep problems or difficulties falling asleep?",
+      "Have you been dealing with anxiety or tension recently?.1",
+      "Have you been getting headaches more often than usual?",
+      "Do you get irritated easily?",
+      "Do you have trouble concentrating on your academic tasks?",
+      "Have you been feeling sadness or low mood?",
+      "Have you been experiencing any illness or health issues?",
+      "Do you often feel lonely or isolated?",
+      "Do you feel overwhelmed with your academic workload?",
+      "Are you in competition with your peers, and does it affect you?",
+      "Do you find that your relationship often causes you stress?",
+      "Are you facing any difficulties with your professors or instructors?",
+      "Is your working environment unpleasant or stressful?",
+      "Do you struggle to find time for relaxation and leisure activities?",
+      "Is your hostel or home environment causing you difficulties?",
+      "Do you lack confidence in your academic performance?",
+      "Do you lack confidence in your choice of academic subjects?",
+      "Academic and extracurricular activities conflicting for you?",
+      "Do you attend classes regularly?",
+      "Have you gained/lost weight?"
+    ],
+    "class_labels": {
+      "0": "Distress (Negative Stress) - Stress that causes anxiety and impairs well-being.",
+      "1": "Eustress (Positive Stress) - Stress that motivates and enhances performance.",
+      "2": "No Stress - Currently experiencing minimal to no stress."
+    },
+    "metrics": {
+      "accuracy": 0.9605911330049262,
+      "precision_macro": 0.9862542955326461,
+      "recall_macro": 0.6904761904761904,
+      "f1_macro": 0.7909622541201489,
+      "f1_weighted": 0.9548856467186775,
+      "mcc": 0.7163840003613874,
+      "confusion_matrix": [
+        [
+          4,
+          3,
+          0
+        ],
+        [
+          0,
+          186,
+          0
+        ],
+        [
+          0,
+          5,
+          5
+        ]
+      ],
+      "per_class": {
+        "Distress (Negative Stress) - Stress that causes anxiety and impairs well-being.": {
+          "precision": 1.0,
+          "recall": 0.5714285714285714,
+          "f1-score": 0.7272727272727273,
+          "support": 7.0
+        },
+        "Eustress (Positive Stress) - Stress that motivates and enhances performance.": {
+          "precision": 0.9587628865979382,
+          "recall": 1.0,
+          "f1-score": 0.9789473684210527,
+          "support": 186.0
+        },
+        "No Stress - Currently experiencing minimal to no stress.": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1-score": 0.6666666666666666,
+          "support": 10.0
+        },
+        "accuracy": 0.9605911330049262,
+        "macro avg": {
+          "precision": 0.9862542955326461,
+          "recall": 0.6904761904761904,
+          "f1-score": 0.7909622541201489,
+          "support": 203.0
+        },
+        "weighted avg": {
+          "precision": 0.9622162409222488,
+          "recall": 0.9605911330049262,
+          "f1-score": 0.9548856467186775,
+          "support": 203.0
+        }
+      }
+    },
+    "cv_f1_macro": 0.7120511740700736,
+    "best_params": {
+      "clf__max_depth": 5,
+      "clf__n_estimators": 100
+    },
+    "n_train": 606,
+    "n_test": 203,
+    "quality_control": {
+      "duplicates_removed": 27,
+      "age_outliers_removed": 7,
+      "straight_liners_detected_not_removed": 250,
+      "straight_line_filter_rejected_reason": "disproportionately removes minority classes (No Stress, Distress) and drops D2 macro-F1 from ~0.79 to ~0.46; investigated in this run, not applied",
+      "rows_before": 843,
+      "rows_after": 809
+    },
+    "class_distribution_full": {
+      "Eustress (Positive Stress) - Stress that motivates and enhances performance.": 739,
+      "No Stress - Currently experiencing minimal to no stress.": 41,
+      "Distress (Negative Stress) - Stress that causes anxiety and impairs well-being.": 29
+    }
+  }
+}
